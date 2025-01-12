@@ -15,3 +15,7 @@ This is a sample app to demo the following:
 The app also handles navigation from
   * list of photos to the details view and
   * back navigation from the details screen to the list screen.
+
+### MVVM architecture pattern
+
+### Jetpack Compose 

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Photos</string>
+
+    <string name="empty_results_message">No photos found.</string>
+    <string name="retry_action">Retry</string>
+    <string name="loading_message">Loading photos...</string>
+
+    <string name="network_error">Failed to fetch response.</string>
+    <string name="parse_error">Failed to parse response.</string>
+    <string name="generic_error">Unknown Error occurred.</string>
+</resources>
