@@ -1,4 +1,4 @@
-package com.yousuf.photos.common.image
+package com.yousuf.photos.imageLoader
 
 import android.graphics.Bitmap
 import java.util.Collections
@@ -30,7 +30,7 @@ class DefaultBitmapCache @Inject constructor() : BitmapCache {
     override fun get(key: String) = synchronizedMap[key]
 
     override fun put(key: String, bitmap: Bitmap) {
-        if(synchronizedMap[key] == null) {
+        if (synchronizedMap[key] == null) {
             synchronizedMap[key] = bitmap
             size += getBytes(bitmap)
         }

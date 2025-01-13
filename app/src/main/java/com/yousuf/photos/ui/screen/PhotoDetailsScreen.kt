@@ -23,10 +23,10 @@ import com.yousuf.photos.viewmodel.PhotosViewModel
 @Composable
 fun PhotoDetailsScreen(
     photoId: Int,
-    photosViewModel: PhotosViewModel = hiltViewModel(key = "photos"),
+    photosViewModel: PhotosViewModel = hiltViewModel(key = "image-loader"),
 ) {
     LaunchedEffect(photoId) {
-        photosViewModel.getPhotoDetails(photoId)
+        photosViewModel.fetchPhotoDetails(photoId)
     }
 
     val photoDetails by remember { photosViewModel.photoDetails }
@@ -39,16 +39,22 @@ fun PhotoDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .fillMaxSize(.7f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.BottomCenter
             ) {
-                AsyncPhotoImage(photo)
+                AsyncPhotoImage(
+                    isThumbnail = false,
+                    photoDetails = photo,
+                    url = photo.downloadUrl,
+                    modifier = Modifier.fillMaxSize(),
+                    imageLoaderType = photosViewModel.imageLoaderType
+                )
             }
 
             Text(
                 modifier = Modifier
                     .fillMaxHeight(.2f)
                     .padding(start = 8.dp, top = 8.dp),
-                text = photoDetails!!.author,
+                text = photo.author,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
             )

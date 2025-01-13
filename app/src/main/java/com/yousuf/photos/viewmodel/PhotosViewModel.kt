@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yousuf.photos.common.data.UserMessage
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.model.data.PhotoDetails
-import com.yousuf.photos.model.repository.PhotosRepository
+import com.yousuf.photos.model.data.ImageLoader
+import com.yousuf.photos.network.data.PhotoDetails
+import com.yousuf.photos.repository.PhotosRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -16,19 +17,22 @@ import javax.inject.Inject
 @HiltViewModel
 class PhotosViewModel @Inject constructor(
     private val photosRepository: PhotosRepository,
-    private val eventLogger: EventsLogger
+    private val eventLogger: EventsLogger,
+    imageLoader: ImageLoader,
 ) : ViewModel() {
+
+    val imageLoaderType = imageLoader
 
     var photosFlow = mutableStateOf<List<PhotoDetails>>(emptyList())
         private set
 
-    var uiState = mutableStateOf<UiState>(UiState.Loading)
+    var uiState = mutableStateOf<UiState>(UiState.None)
         private set
 
     var error = mutableStateOf<UserMessage?>(null)
         private set
 
-    var fetchInProgress = mutableStateOf<Boolean>(false)
+    var canRetry = mutableStateOf<Boolean>(true)
         private set
 
     var photoDetails = mutableStateOf<PhotoDetails?>(null)
@@ -42,14 +46,21 @@ class PhotosViewModel @Inject constructor(
         fetchPhotos()
     }
 
+    fun refreshList() {
+        photosRepository.clear()
+        fetchPhotos()
+    }
+
     fun fetchPhotos() {
         viewModelScope.launch {
-            fetchInProgress.value = true
+            canRetry.value = false
             updateUiState(UiState.Loading)
             error.value = null
             try {
                 photosFlow.value = photosRepository.fetchPhotos().also {
-                    updateUiState( if(it.isEmpty()) UiState.Empty else UiState.Success )
+                    updateUiState(
+                        if (it.isEmpty()) UiState.Empty else UiState.Success
+                    )
                 }
             } catch (e: Exception) {
                 error.value = UserMessage.fromThrowable(e)
@@ -60,10 +71,10 @@ class PhotosViewModel @Inject constructor(
 
     private fun updateUiState(state: UiState) {
         uiState.value = state
-        fetchInProgress.value = false
+        canRetry.value = true
     }
 
-    fun getPhotoDetails(photoId: Int) {
+    fun fetchPhotoDetails(photoId: Int) {
         eventLogger.logInfo("fetching PhotoDetails: $photoId")
         photosRepository.getPhotoDetails(photoId).apply {
             photoDetails.value = this
@@ -71,11 +82,16 @@ class PhotosViewModel @Inject constructor(
         }
     }
 
-    @Parcelize sealed class UiState : Parcelable {
+    fun clearPhotoDetails() {
+        photoDetails.value = null
+    }
+
+    @Parcelize
+    sealed class UiState : Parcelable {
         object Loading : UiState()
         object Success : UiState()
         object Empty : UiState()
         object Error : UiState()
+        object None : UiState()
     }
-
 }

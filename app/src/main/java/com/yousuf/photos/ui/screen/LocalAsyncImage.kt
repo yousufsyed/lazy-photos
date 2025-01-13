@@ -3,7 +3,7 @@ package com.yousuf.photos.ui.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -20,38 +20,48 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yousuf.photos.R
-import com.yousuf.photos.model.data.PhotoDetails
+import com.yousuf.photos.network.data.PhotoDetails
 import com.yousuf.photos.viewmodel.BitmapState
 import com.yousuf.photos.viewmodel.ImageLoaderViewModel
 
+
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun AsyncPhotoImage(
+fun LocalAsyncImage(
     photoDetails: PhotoDetails,
+    isThumbnail: Boolean = false,
     imageLoaderViewModel: ImageLoaderViewModel = hiltViewModel(key = "image-loader"),
 ) {
-
-    val configuration = LocalConfiguration.current
-
     val bitmapState = mutableStateOf<BitmapState>(BitmapState.None)
-
     val rememberedBitmapState by remember { bitmapState }
+    val configuration = LocalConfiguration.current
 
     LaunchedEffect("image") {
         if (rememberedBitmapState is BitmapState.None) {
-            imageLoaderViewModel.getBitmap(configuration, photoDetails, bitmapState)
+            if (isThumbnail) {
+                imageLoaderViewModel.getThumbnailBitmap(
+                    configuration, 48, photoDetails, bitmapState
+                )
+            } else {
+                imageLoaderViewModel.getBitmap(configuration, photoDetails, bitmapState)
+            }
         }
     }
     AsyncPhoto(rememberedBitmapState)
 }
 
 @Composable
-fun AsyncPhoto(state: BitmapState) = Box(modifier=Modifier.fillMaxWidth(),
-    contentAlignment = Alignment.Center,
-) {
+fun AsyncPhoto(state: BitmapState) {
     when (state) {
         is BitmapState.None -> {}
-        is BitmapState.Loading -> CircularProgressIndicator()
+
+        is BitmapState.Loading -> Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
         is BitmapState.Error ->
             Image(
                 painter = painterResource(id = R.drawable.img_outline),

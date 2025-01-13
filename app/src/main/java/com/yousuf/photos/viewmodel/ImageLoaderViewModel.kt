@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.yousuf.photos.common.data.DefaultDispatchers
 import com.yousuf.photos.common.events.EventsLogger
 import com.yousuf.photos.common.extensions.getFrameHeight
-import com.yousuf.photos.common.image.DownloaderFactory
-import com.yousuf.photos.model.data.PhotoDetails
-import com.yousuf.photos.model.data.RequestData
-import com.yousuf.photos.model.data.toRequestData
+import com.yousuf.photos.imageLoader.DownloaderFactory
+import com.yousuf.photos.network.data.PhotoDetails
+import com.yousuf.photos.network.data.RequestData
+import com.yousuf.photos.network.data.toRequestData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +32,8 @@ class ImageLoaderViewModel @Inject constructor(
             state.value = BitmapState.Loading
             try {
                 val (frameWidth, frameHeight) = getFrameHeight(configuration)
-                val request = photoDetails.toRequestData(frameWidth = frameWidth, frameHeight = frameHeight)
+                val request =
+                    photoDetails.toRequestData(frameWidth = frameWidth, frameHeight = frameHeight)
                 fetchBitmap(request).let { bitmap ->
                     state.value = BitmapState.Success(bitmap)
                 }
@@ -71,7 +72,7 @@ class ImageLoaderViewModel @Inject constructor(
      * Each request creates a new ImageDownloader instance, to handle image fetch
      * and return a bitmap of desired size to the caller.
      */
-    private suspend fun fetchBitmap(request : RequestData): Bitmap {
+    private suspend fun fetchBitmap(request: RequestData): Bitmap {
         return imageDownloaderFactory.create().getBitmap(request)
     }
 

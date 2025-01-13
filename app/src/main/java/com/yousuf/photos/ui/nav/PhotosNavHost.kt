@@ -7,16 +7,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.yousuf.photos.ui.screen.PhotoDetailsScreen
 import com.yousuf.photos.ui.screen.PhotoListScreen
+import com.yousuf.photos.viewmodel.PhotosViewModel
 
 @Composable
 fun PhotosNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = Destination.List.route
+    photosViewModel: PhotosViewModel,
+    startDestination: String = Destination.List.route,
 ) {
-    NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = modifier
+    ) {
         composable(Destination.List.route) {
-            PhotoListScreen(navController)
+            PhotoListScreen(navController, photosViewModel)
         }
         composable(route = "{Destination.Details.route}/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0

@@ -1,11 +1,11 @@
-package com.yousuf.photos.common.image
+package com.yousuf.photos.imageLoader
 
 import android.graphics.Bitmap
 import com.yousuf.photos.common.data.DefaultDispatchers
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.model.data.RequestData
-import com.yousuf.photos.model.network.BitmapFetchException
-import com.yousuf.photos.model.network.ImageRequest
+import com.yousuf.photos.network.BitmapFetchException
+import com.yousuf.photos.network.ImageRequest
+import com.yousuf.photos.network.data.RequestData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

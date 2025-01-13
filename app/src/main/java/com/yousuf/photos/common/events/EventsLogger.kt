@@ -15,7 +15,7 @@ interface EventsLogger {
 }
 
 class DefaultEventsLogger @Inject constructor(
-    @EventLoggerScope private val _events : Channel<LogEvent>
+    @EventLoggerScope private val _events: Channel<LogEvent>,
 ) : EventsLogger {
 
     override val events = _events.receiveAsFlow()

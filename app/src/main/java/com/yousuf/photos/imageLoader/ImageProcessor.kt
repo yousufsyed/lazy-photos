@@ -1,8 +1,8 @@
-package com.yousuf.photos.common.image
+package com.yousuf.photos.imageLoader
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.yousuf.photos.model.data.RequestData
+import com.yousuf.photos.network.data.RequestData
 
 interface ImageProcessor {
     suspend fun processBitmapFromBytes(

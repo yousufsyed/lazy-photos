@@ -1,6 +1,5 @@
-package com.yousuf.photos.model.data
+package com.yousuf.photos.network.data
 
-import android.annotation.SuppressLint
 import android.os.Parcelable
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -24,10 +23,12 @@ data class PhotoDetails(
     val width: Int,
     val filename: String,
     val id: Int,
-    val author: String
-) : Parcelable
+    val author: String,
+) : Parcelable {
+    val downloadUrl: String
+        get() = "https://picsum.photos/id/$id/$width/$height"
+}
 
-@SuppressLint("DefaultLocale")
 fun ResponseBody.toPhotos(): Map<Int, PhotoDetails> {
     try {
         val jsonBody = string()
@@ -48,5 +49,6 @@ fun ResponseBody.toPhotos(): Map<Int, PhotoDetails> {
         throw PhotosJsonParseException()
     }
 }
+
 
 class PhotosJsonParseException() : RuntimeException()

@@ -7,17 +7,18 @@ import com.yousuf.photos.common.events.EventsLogger
 import com.yousuf.photos.common.events.LogEvent
 import com.yousuf.photos.common.events.MessageDelegate
 import com.yousuf.photos.common.events.SnackbarEvent
-import com.yousuf.photos.common.image.BitmapCache
-import com.yousuf.photos.common.image.DefaultBitmapCache
-import com.yousuf.photos.common.image.DefaultDiskCache
-import com.yousuf.photos.common.image.DiskCache
-import com.yousuf.photos.common.image.DownloaderFactory
-import com.yousuf.photos.common.image.ImageDownloaderFactory
-import com.yousuf.photos.model.network.DefaultImageRequest
-import com.yousuf.photos.model.network.ImageRequest
-import com.yousuf.photos.model.network.PhotosService
-import com.yousuf.photos.model.repository.DefaultPhotosRepository
-import com.yousuf.photos.model.repository.PhotosRepository
+import com.yousuf.photos.imageLoader.BitmapCache
+import com.yousuf.photos.imageLoader.DefaultBitmapCache
+import com.yousuf.photos.imageLoader.DefaultDiskCache
+import com.yousuf.photos.imageLoader.DiskCache
+import com.yousuf.photos.imageLoader.DownloaderFactory
+import com.yousuf.photos.imageLoader.ImageDownloaderFactory
+import com.yousuf.photos.model.data.ImageLoader
+import com.yousuf.photos.network.DefaultImageRequest
+import com.yousuf.photos.network.ImageRequest
+import com.yousuf.photos.network.PhotosService
+import com.yousuf.photos.repository.DefaultPhotosRepository
+import com.yousuf.photos.repository.PhotosRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,6 +90,9 @@ class PhotosModule {
 
     @Provides
     fun providesImageRequest(impl: DefaultImageRequest): ImageRequest = impl
+
+    @Provides
+    fun providesImageLoader(): ImageLoader = ImageLoader.LOCAL
 }
 
 @Qualifier

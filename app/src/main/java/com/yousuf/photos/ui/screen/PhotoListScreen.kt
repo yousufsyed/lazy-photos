@@ -28,18 +28,16 @@ import com.yousuf.photos.viewmodel.PhotosViewModel.UiState.Success
 @Composable
 fun PhotoListScreen(
     navController: NavHostController,
-    viewModel: PhotosViewModel = hiltViewModel()
+    viewModel: PhotosViewModel = hiltViewModel(),
 ) {
-    val uiState = rememberSaveable("PhotosUiState", viewModel.uiState) { viewModel.uiState }
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        when (uiState.value) {
-            is Success -> ShowPhotos(navController)
-            is Error -> ShowError()
+        when (viewModel.uiState.value) {
+            is Success -> ShowPhotos(navController, viewModel)
+            is Error -> ShowError(viewModel)
             is Empty -> ShowEmpty()
             else -> ShowLoading()
         }
@@ -85,7 +83,7 @@ fun ShowError(
 
     Button(
         modifier = Modifier.padding(top = 8.dp),
-        enabled = remember { viewModel.fetchInProgress.value },
+        enabled = remember { viewModel.canRetry.value },
         onClick = { viewModel.retry() }
     ) {
         Text(text = stringResource(id = R.string.retry_action))

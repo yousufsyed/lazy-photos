@@ -1,4 +1,4 @@
-package com.yousuf.photos.common.image
+package com.yousuf.photos.imageLoader
 
 import android.content.Context
 import android.os.Environment
@@ -8,11 +8,11 @@ import javax.inject.Inject
 
 interface DiskCache {
     suspend fun saveToDisk(bytes: ByteArray, fileName: String)
-    suspend fun readFromDisk(fileName: String) : ByteArray?
+    suspend fun readFromDisk(fileName: String): ByteArray?
 }
 
 class DefaultDiskCache @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
 ) : DiskCache {
 
     private val cacheDir: File
@@ -24,7 +24,7 @@ class DefaultDiskCache @Inject constructor(
         }
     }
 
-    fun getFile(fileName: String) : File?{
+    fun getFile(fileName: String): File? {
         return File(cacheDir, fileName)
     }
 
@@ -32,7 +32,7 @@ class DefaultDiskCache @Inject constructor(
         getFile(fileName)?.writeBytes(bytes)
     }
 
-    override suspend fun readFromDisk(fileName: String) : ByteArray? {
+    override suspend fun readFromDisk(fileName: String): ByteArray? {
         return getFile(fileName)?.readBytes()
     }
 
@@ -45,7 +45,7 @@ class DefaultDiskCache @Inject constructor(
         }
     }
 
-    private fun createStorageDir(context: Context) : File {
+    private fun createStorageDir(context: Context): File {
         return File(context.filesDir, "/data/PhotoDownloads")
     }
 

@@ -1,11 +1,11 @@
-package com.yousuf.photos.model.network
+package com.yousuf.photos.network
 
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.model.data.RequestData
+import com.yousuf.photos.network.data.RequestData
 import javax.inject.Inject
 
 interface ImageRequest {
-    suspend fun fetchBitmapAsBytes(request : RequestData): ByteArray
+    suspend fun fetchBitmapAsBytes(request: RequestData): ByteArray
 }
 
 class DefaultImageRequest @Inject constructor(
@@ -13,7 +13,7 @@ class DefaultImageRequest @Inject constructor(
     private val eventsLogger: EventsLogger,
 ) : ImageRequest {
 
-    override suspend fun fetchBitmapAsBytes(request : RequestData): ByteArray {
+    override suspend fun fetchBitmapAsBytes(request: RequestData): ByteArray {
         return try {
             photosService.getPhoto(request.imageWidth, request.imageHeight, request.id)
                 .let { response ->

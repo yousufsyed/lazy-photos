@@ -1,13 +1,13 @@
-package com.yousuf.photos.common.image
+package com.yousuf.photos.imageLoader
 
 import com.yousuf.photos.common.data.DefaultDispatchers
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.model.network.DefaultImageRequest
-import com.yousuf.photos.model.network.PhotosService
+import com.yousuf.photos.network.DefaultImageRequest
+import com.yousuf.photos.network.PhotosService
 import javax.inject.Inject
 
 interface DownloaderFactory {
-    fun create() : ImageDownloader
+    fun create(): ImageDownloader
 }
 
 class ImageDownloaderFactory @Inject constructor(
@@ -16,7 +16,7 @@ class ImageDownloaderFactory @Inject constructor(
     private val eventLogger: EventsLogger,
     private val photosService: PhotosService,
     private val dispatchers: DefaultDispatchers,
-) : DownloaderFactory  {
+) : DownloaderFactory {
 
     override fun create(): ImageDownloader {
         return DefaultImageDownloader(

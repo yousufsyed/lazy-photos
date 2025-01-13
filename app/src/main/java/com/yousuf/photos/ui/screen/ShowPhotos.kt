@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.yousuf.photos.model.data.PhotoDetails
+import com.yousuf.photos.network.data.PhotoDetails
 import com.yousuf.photos.ui.nav.Destination
 import com.yousuf.photos.viewmodel.PhotosViewModel
 
@@ -29,7 +29,6 @@ fun ShowPhotos(
     navController: NavHostController,
     viewModel: PhotosViewModel = hiltViewModel(key = "photos"),
 ) {
-
     val photos by remember("photos") { viewModel.photosFlow }
 
     LazyColumn {
@@ -45,6 +44,7 @@ fun ShowPhotos(
 fun PhotoItem(
     photoDetails: PhotoDetails,
     navController: NavHostController,
+    photosViewModel: PhotosViewModel = hiltViewModel(key = "photos"),
 ) {
     Row(
         modifier = Modifier
@@ -65,7 +65,15 @@ fun PhotoItem(
                 .width(52.dp),
             contentAlignment = Alignment.Center
         ) {
-            AsyncThumbnail(photoDetails)
+            AsyncPhotoImage(
+                isThumbnail = true,
+                photoDetails = photoDetails,
+                imageLoaderType = photosViewModel.imageLoaderType,
+                url = photoDetails.downloadUrl,
+                modifier = Modifier
+                    .height(48.dp)
+                    .width(48.dp),
+            )
         }
 
         Text(
@@ -76,3 +84,4 @@ fun PhotoItem(
         )
     }
 }
+

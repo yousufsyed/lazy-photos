@@ -10,19 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -32,10 +32,10 @@ import com.yousuf.photos.common.events.HandleEventLogger
 import com.yousuf.photos.common.events.LocalEventLogger
 import com.yousuf.photos.common.events.LocalMessageDelegate
 import com.yousuf.photos.common.events.MessageDelegate
-import com.yousuf.photos.common.events.MessageHandler
 import com.yousuf.photos.ui.nav.Destination
 import com.yousuf.photos.ui.nav.PhotosNavHost
 import com.yousuf.photos.ui.theme.PhotosTheme
+import com.yousuf.photos.viewmodel.PhotosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -54,17 +54,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             PhotosTheme {
                 val navController = rememberNavController()
-                val snackbarHostState = remember("snackbar-host") { SnackbarHostState() }
+                val photosViewModel: PhotosViewModel = hiltViewModel(key = "photos")
+
                 RegisterProviders(eventLogger, messageDelegate) {
-                    MessageHandler(snackbarHostState)
                     HandleEventLogger()
                     Scaffold(modifier = Modifier.fillMaxSize(),
-                        topBar = { PhotosToolBar(navController) }
+                        topBar = { PhotosToolBar(navController, photosViewModel) }
                     ) { innerPadding ->
                         PhotosNavHost(
                             modifier = Modifier.padding(innerPadding),
                             navController = navController,
-                            startDestination = Destination.List.route
+                            startDestination = Destination.List.route,
+                            photosViewModel = photosViewModel
                         )
                     }
                 }
@@ -73,9 +74,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PhotosToolBar(navController: NavHostController) {
+fun PhotosToolBar(
+    navController: NavHostController,
+    photosViewModel: PhotosViewModel,
+) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 
     TopAppBar(
@@ -85,7 +90,7 @@ fun PhotosToolBar(navController: NavHostController) {
             Text(stringResource(id = R.string.app_name))
         },
         navigationIcon = {
-            if(currentDestination == Destination.List.route) {
+            if (currentDestination == Destination.List.route) {
                 IconButton(onClick = {}) {
                     Icon(
                         imageVector = Icons.Filled.Home,
@@ -104,6 +109,16 @@ fun PhotosToolBar(navController: NavHostController) {
                     )
                 }
             }
+        },
+        actions = {
+            if (currentDestination == Destination.List.route) {
+                IconButton(onClick = { photosViewModel.refreshList() }) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Refresh"
+                    )
+                }
+            }
         }
     )
 }
@@ -115,7 +130,7 @@ fun PhotosToolBar(navController: NavHostController) {
 fun RegisterProviders(
     eventLogger: EventsLogger,
     messageDelegate: MessageDelegate,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalEventLogger provides eventLogger,

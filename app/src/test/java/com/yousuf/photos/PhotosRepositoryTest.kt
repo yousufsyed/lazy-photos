@@ -2,12 +2,11 @@ package com.yousuf.photos
 
 import com.yousuf.photos.common.data.DefaultDispatchers
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.model.data.PhotoDetails
-import com.yousuf.photos.model.network.PhotosService
-import com.yousuf.photos.model.repository.DefaultPhotosRepository
-import com.yousuf.photos.model.repository.NetworkException
-import com.yousuf.photos.model.repository.PhotosRepository
-import io.mockk.every
+import com.yousuf.photos.network.data.PhotoDetails
+import com.yousuf.photos.network.PhotosService
+import com.yousuf.photos.repository.DefaultPhotosRepository
+import com.yousuf.photos.repository.NetworkException
+import com.yousuf.photos.repository.PhotosRepository
 import io.mockk.justRun
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
