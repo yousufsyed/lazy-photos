@@ -7,7 +7,6 @@ private const val FILENAME = "PICSUM_PHOTOS_%d_%s"
 
 data class RequestData(
     val id: Int,
-    //val offset: Int, // offset for the top image height of the imageview container
     val frameHeight: Int, // height of the imageview container
     val frameWidth: Int, // width of the imageview container
     val imageHeight: Int,

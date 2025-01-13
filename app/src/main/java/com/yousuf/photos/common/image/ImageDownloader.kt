@@ -16,6 +16,13 @@ interface ImageDownloader {
     suspend fun getBitmap(request: RequestData): Bitmap
 }
 
+/**
+ * ImageDownloader is responsible for fetching the image from the network,
+ * processing the image,
+ * Saving the image to disk,
+ * Caching the image in memory,
+ * and returning the bitmap to caller
+ */
 class DefaultImageDownloader @Inject constructor(
     private val imageRequest: ImageRequest,
     private val bitmapCache: BitmapCache,
@@ -26,9 +33,10 @@ class DefaultImageDownloader @Inject constructor(
 
     override suspend fun getBitmap(request: RequestData): Bitmap {
         return withContext(dispatchers.io) {
-            bitmapCache.get(request.filename) ?: // try cache
-            diskFetch(request.filename)?.toProcessedBitmap(request) ?: //try disk
-            networkFetch(request).toProcessedBitmap(request) //try network
+            val cacheKey = request.filename + request.frameWidth
+            bitmapCache.get(cacheKey) ?: // try cache
+            diskFetch(request.filename)?.toProcessedBitmap(cacheKey, request) ?: //try disk
+            networkFetch(request).toProcessedBitmap(cacheKey, request) //try network
         }
     }
 
@@ -46,7 +54,7 @@ class DefaultImageDownloader @Inject constructor(
         try {
             eventLogger.logInfo("reading from network")
             return imageRequest.fetchBitmapAsBytes(request)
-              .also { bytes -> saveBitmap(bytes, request.filename) }
+                .also { bytes -> saveBitmap(bytes, request.filename) }
         } catch (e: Exception) {
             eventLogger.logError(e)
             throw BitmapFetchException("failed to fetch bitmap")
@@ -56,21 +64,27 @@ class DefaultImageDownloader @Inject constructor(
     private fun saveBitmap(bytes: ByteArray, filename: String) {
         eventLogger.logInfo("saving bitmap to disk")
         try {
-            // since this can be independent of displaying the bitmap this can be delegated to a new coroutine
+            // since this can be independent of displaying the bitmap
+            // this can be delegated to a new coroutine
+            // Fixme handle cancellation
             CoroutineScope(SupervisorJob() + dispatchers.io).launch {
-                  diskCache.saveToDisk(bytes, filename)
+                diskCache.saveToDisk(bytes, filename)
             }
         } catch (e: Exception) {
             eventLogger.logError(e)
         }
     }
 
-    private suspend fun ByteArray.toProcessedBitmap(request: RequestData): Bitmap {
+    private suspend fun ByteArray.toProcessedBitmap(
+        cacheKey: String,
+        request: RequestData,
+    ): Bitmap {
         eventLogger.logInfo("converting to bitmap")
         val imageProcessor = DefaultImageProcessor()
         return imageProcessor.processBitmapFromBytes(this, request)
             .also {
-                bitmapCache.put(request.filename, it)
+                // cache separate image for thumbnail and details
+                bitmapCache.put(cacheKey, it)
             }
     }
 }

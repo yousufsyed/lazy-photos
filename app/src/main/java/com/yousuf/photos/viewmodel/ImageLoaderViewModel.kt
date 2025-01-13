@@ -67,6 +67,10 @@ class ImageLoaderViewModel @Inject constructor(
         }
     }
 
+    /***
+     * Each request creates a new ImageDownloader instance, to handle image fetch
+     * and return a bitmap of desired size to the caller.
+     */
     private suspend fun fetchBitmap(request : RequestData): Bitmap {
         return imageDownloaderFactory.create().getBitmap(request)
     }

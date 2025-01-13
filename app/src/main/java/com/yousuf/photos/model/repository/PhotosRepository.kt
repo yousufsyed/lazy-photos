@@ -35,7 +35,7 @@ class DefaultPhotosRepository @Inject constructor(
                             eventsLogger.logInfo("data received from network")
                             response.body()!!.toPhotos()
                                 .apply { cache.putAll(this) }
-                                .let { it.values.toList() }
+                                .values.toList()
                         } else {
                             throw NetworkException("failed to receive data from network")
                         }

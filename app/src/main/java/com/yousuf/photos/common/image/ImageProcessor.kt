@@ -11,7 +11,10 @@ interface ImageProcessor {
     ): Bitmap
 }
 
-
+/**
+ * DefaultImageProcessor is a helper class to process bytes into bitmap,
+ * scale it to desired size, and return a bitmap.
+ */
 class DefaultImageProcessor() : ImageProcessor {
 
     override suspend fun processBitmapFromBytes(
