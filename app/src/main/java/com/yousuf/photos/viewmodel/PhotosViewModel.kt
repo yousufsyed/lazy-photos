@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yousuf.photos.common.data.UserMessage
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.model.data.ImageLoader
-import com.yousuf.photos.network.data.PhotoDetails
+import com.yousuf.photos.data.PhotoDetails
 import com.yousuf.photos.repository.PhotosRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,10 +17,7 @@ import javax.inject.Inject
 class PhotosViewModel @Inject constructor(
     private val photosRepository: PhotosRepository,
     private val eventLogger: EventsLogger,
-    imageLoader: ImageLoader,
 ) : ViewModel() {
-
-    val imageLoaderType = imageLoader
 
     var photosFlow = mutableStateOf<List<PhotoDetails>>(emptyList())
         private set

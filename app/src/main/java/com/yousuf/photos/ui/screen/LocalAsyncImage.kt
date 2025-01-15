@@ -20,10 +20,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yousuf.photos.R
-import com.yousuf.photos.network.data.PhotoDetails
+import com.yousuf.photos.data.PhotoDetails
 import com.yousuf.photos.viewmodel.BitmapState
 import com.yousuf.photos.viewmodel.ImageLoaderViewModel
-
 
 @SuppressLint("UnrememberedMutableState")
 @Composable

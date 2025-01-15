@@ -44,9 +44,6 @@ fun PhotoDetailsScreen(
                 AsyncPhotoImage(
                     isThumbnail = false,
                     photoDetails = photo,
-                    url = photo.downloadUrl,
-                    modifier = Modifier.fillMaxSize(),
-                    imageLoaderType = photosViewModel.imageLoaderType
                 )
             }
 

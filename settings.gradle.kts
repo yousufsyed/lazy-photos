@@ -21,3 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Photos"
 include(":app")
+include(":common")
+include(":network")
+include(":imageloader")

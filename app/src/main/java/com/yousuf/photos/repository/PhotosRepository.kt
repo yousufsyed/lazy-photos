@@ -2,9 +2,9 @@ package com.yousuf.photos.repository
 
 import com.yousuf.photos.common.data.DefaultDispatchers
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.network.PhotosService
-import com.yousuf.photos.network.data.PhotoDetails
-import com.yousuf.photos.network.data.toPhotos
+import com.yousuf.photos.data.PhotoDetails
+import com.yousuf.photos.data.toPhotosMap
+import com.yousuf.photos.network.requests.PhotosRequest
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ interface PhotosRepository {
 }
 
 class DefaultPhotosRepository @Inject constructor(
-    private val photosService: PhotosService,
+    private val photosRequest: PhotosRequest,
     private val eventsLogger: EventsLogger,
     private val dispatchers: DefaultDispatchers,
 ) : PhotosRepository {
@@ -31,19 +31,11 @@ class DefaultPhotosRepository @Inject constructor(
                 cache.values.toList()
             } else {
                 eventsLogger.logInfo("fetching data from network")
-
                 try {
-                    photosService.getPhotos().let { response ->
-                        eventsLogger.logInfo("data received from network")
-                        if (response.isSuccessful && response.body() != null) {
-                            eventsLogger.logInfo("data received from network")
-                            response.body()!!.toPhotos()
-                                .apply { cache.putAll(this) }
-                                .values.toList()
-                        } else {
-                            throw NetworkException("Failed to fetch photos")
-                        }
-                    }
+                    photosRequest.fetchPhotos().toPhotosMap()
+                        .apply { cache.putAll(this) }
+                        .also { eventsLogger.logInfo("data received from network") }
+                        .values.toList()
                 } catch (e: Exception) {
                     eventsLogger.logError(e)
                     throw e
@@ -58,5 +50,3 @@ class DefaultPhotosRepository @Inject constructor(
         cache.clear()
     }
 }
-
-class NetworkException(message: String) : RuntimeException(message)

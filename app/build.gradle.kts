@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.android.ksp)
     id("kotlin-parcelize")
 }
 
@@ -49,6 +47,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":common"))
+    implementation(project(":network"))
+    implementation(project(":imageloader"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -59,15 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.navigation.compose)
 
-    implementation(libs.gson)
-    implementation(libs.coil)
-
-    implementation(libs.retrofit)
     implementation(libs.gson.convertor)
-    implementation(libs.hilt)
-    implementation(libs.hilt.viewmodel)
-    implementation(libs.hilt.compiler)
-    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

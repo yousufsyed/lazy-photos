@@ -1,9 +1,8 @@
 package com.yousuf.photos
 
-import com.yousuf.photos.common.data.DefaultDispatchers
 import com.yousuf.photos.common.events.EventsLogger
 import com.yousuf.photos.network.data.PhotoDetails
-import com.yousuf.photos.network.PhotosService
+import com.yousuf.photos.network.api.PhotosService
 import com.yousuf.photos.repository.DefaultPhotosRepository
 import com.yousuf.photos.repository.NetworkException
 import com.yousuf.photos.repository.PhotosRepository
