@@ -1,9 +1,12 @@
 package com.yousuf.imageloader
 
-import com.yousuf.photos.common.data.DefaultDispatchers
+import com.yousuf.imageloader.cache.BitmapCache
+import com.yousuf.imageloader.cache.DiskCache
+import com.yousuf.photos.common.di.IO
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.network.requests.DefaultImageRequest
 import com.yousuf.photos.network.api.PhotosService
+import com.yousuf.photos.network.requests.DefaultImageRequest
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 interface DownloaderFactory {
@@ -13,18 +16,18 @@ interface DownloaderFactory {
 class ImageDownloaderFactory @Inject constructor(
     private val diskCache: DiskCache,
     private val bitmapCache: BitmapCache,
-    private val eventLogger: EventsLogger,
     private val photosService: PhotosService,
-    private val dispatchers: DefaultDispatchers,
+    private val eventLogger: EventsLogger,
+    @IO private val ioDispatcher: CoroutineDispatcher,
 ) : DownloaderFactory {
 
     override fun create(): ImageDownloader {
         return DefaultImageDownloader(
-            DefaultImageRequest(photosService, eventLogger),
+            DefaultImageRequest(photosService, eventLogger, ioDispatcher),
             bitmapCache,
             eventLogger,
             diskCache,
-            dispatchers
+            ioDispatcher
         )
     }
 }

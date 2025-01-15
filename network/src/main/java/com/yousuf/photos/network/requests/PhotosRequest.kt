@@ -1,10 +1,11 @@
 package com.yousuf.photos.network.requests
 
-import com.yousuf.photos.common.data.DefaultDispatchers
+import com.yousuf.photos.common.di.IO
 import com.yousuf.photos.common.events.EventsLogger
 import com.yousuf.photos.network.api.PhotosService
 import com.yousuf.photos.network.data.RawPhoto
 import com.yousuf.photos.network.data.toPhotos
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -15,11 +16,11 @@ interface PhotosRequest {
 class DefaultPhotosRequest @Inject constructor(
     private val photosService: PhotosService,
     private val eventsLogger: EventsLogger,
-    private val dispatchers: DefaultDispatchers,
+    @IO private val ioDispatcher: CoroutineDispatcher,
 ) : PhotosRequest {
 
     override suspend fun fetchPhotos(): List<RawPhoto> {
-        return withContext(dispatchers.io) {
+        return withContext(ioDispatcher) {
             eventsLogger.logInfo("fetching data from network")
 
             try {

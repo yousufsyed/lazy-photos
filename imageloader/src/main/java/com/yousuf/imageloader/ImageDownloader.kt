@@ -1,11 +1,13 @@
 package com.yousuf.imageloader
 
 import android.graphics.Bitmap
-import com.yousuf.photos.common.data.DefaultDispatchers
+import com.yousuf.imageloader.cache.BitmapCache
+import com.yousuf.imageloader.cache.DiskCache
 import com.yousuf.photos.common.events.EventsLogger
 import com.yousuf.photos.network.requests.BitmapFetchException
 import com.yousuf.photos.network.requests.ImageRequest
 import com.yousuf.photos.network.data.RequestData
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -23,16 +25,16 @@ interface ImageDownloader {
  * Caching the image in memory,
  * and returning the bitmap to caller
  */
-class DefaultImageDownloader @Inject constructor(
+class DefaultImageDownloader(
     private val imageRequest: ImageRequest,
     private val bitmapCache: BitmapCache,
     private val eventLogger: EventsLogger,
     private val diskCache: DiskCache,
-    private val dispatchers: DefaultDispatchers,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ImageDownloader {
 
     override suspend fun getBitmap(request: RequestData): Bitmap {
-        return withContext(dispatchers.io) {
+        return withContext(ioDispatcher) {
             val cacheKey = request.filename + request.frameWidth
             bitmapCache.get(cacheKey) ?: // try cache
             diskFetch(request.filename)?.toProcessedBitmap(cacheKey, request) ?: //try disk
@@ -66,8 +68,7 @@ class DefaultImageDownloader @Inject constructor(
         try {
             // since this can be independent of displaying the bitmap
             // this can be delegated to a new coroutine
-            // Fixme handle cancellation
-            CoroutineScope(SupervisorJob() + dispatchers.io).launch {
+            CoroutineScope(SupervisorJob() + ioDispatcher).launch {
                 diskCache.saveToDisk(bytes, filename)
             }
         } catch (e: Exception) {

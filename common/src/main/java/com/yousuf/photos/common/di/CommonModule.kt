@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import javax.inject.Qualifier
@@ -46,6 +47,10 @@ class CommonModule {
         main = Dispatchers.Main
     )
 
+    @Singleton
+    @Provides
+    @IO
+    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }
 
 @Qualifier
@@ -55,3 +60,7 @@ annotation class EventLoggerScope
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MessageDelegateScope
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class IO

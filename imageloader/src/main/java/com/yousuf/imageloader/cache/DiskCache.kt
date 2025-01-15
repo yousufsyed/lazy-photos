@@ -1,4 +1,4 @@
-package com.yousuf.imageloader
+package com.yousuf.imageloader.cache
 
 import android.content.Context
 import android.os.Environment

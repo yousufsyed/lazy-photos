@@ -1,10 +1,10 @@
 package com.yousuf.photos.network.di
 
+import com.yousuf.photos.network.api.PhotosService
 import com.yousuf.photos.network.requests.DefaultImageRequest
 import com.yousuf.photos.network.requests.DefaultPhotosRequest
 import com.yousuf.photos.network.requests.ImageRequest
 import com.yousuf.photos.network.requests.PhotosRequest
-import com.yousuf.photos.network.api.PhotosService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +33,5 @@ class NetworkModule {
     fun providesPhotosRequest(impl: DefaultPhotosRequest): PhotosRequest = impl
 
     @Provides
-    fun providesImageRequest(impl: DefaultImageRequest) : ImageRequest = impl
+    fun providesImageRequest(impl: DefaultImageRequest): ImageRequest = impl
 }

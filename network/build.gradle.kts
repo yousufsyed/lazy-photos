@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.android.ksp)
     id("kotlin-parcelize")
 }
 
@@ -39,6 +41,12 @@ dependencies {
     implementation(libs.material)
     implementation(libs.gson)
     implementation(libs.retrofit)
+    implementation(libs.gson.convertor)
+
+    implementation(libs.hilt)
+    implementation(libs.hilt.viewmodel)
+    implementation(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
 }

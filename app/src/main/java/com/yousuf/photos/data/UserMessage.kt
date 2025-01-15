@@ -3,7 +3,7 @@ package com.yousuf.photos.common.data
 import android.os.Parcelable
 import com.yousuf.photos.R
 import com.yousuf.photos.network.data.PhotosJsonParseException
-import com.yousuf.photos.repository.NetworkException
+import com.yousuf.photos.network.requests.NetworkException
 import kotlinx.parcelize.Parcelize
 import java.io.IOException
 

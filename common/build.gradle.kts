@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.android.ksp)
     id("kotlin-parcelize")
@@ -32,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        compose=true
+    }
 }
 
 dependencies {
@@ -47,9 +51,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    api(libs.hilt)
-    api(libs.hilt.viewmodel)
-    api(libs.hilt.compiler)
+    implementation(libs.hilt)
+    implementation(libs.hilt.viewmodel)
+    implementation(libs.hilt.compiler)
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)

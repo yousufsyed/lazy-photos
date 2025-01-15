@@ -1,10 +1,11 @@
 package com.yousuf.photos
 
 import com.yousuf.photos.common.events.EventsLogger
-import com.yousuf.photos.network.data.PhotoDetails
+import com.yousuf.photos.data.PhotoDetails
 import com.yousuf.photos.network.api.PhotosService
+import com.yousuf.photos.network.requests.NetworkException
+import com.yousuf.photos.network.requests.PhotosRequest
 import com.yousuf.photos.repository.DefaultPhotosRepository
-import com.yousuf.photos.repository.NetworkException
 import com.yousuf.photos.repository.PhotosRepository
 import io.mockk.justRun
 import io.mockk.mockk
@@ -29,17 +30,15 @@ class PhotosRepositoryTest {
     private val mockWebServer = MockWebServer()
     private lateinit var photoService: PhotosService
     private lateinit var photosRepository: PhotosRepository
+    private lateinit var photosRequest: PhotosRequest
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val dispatcher = UnconfinedTestDispatcher()
+
     private val eventLogger = mockk<EventsLogger>() {
         justRun { logInfo(any()) }
         justRun { logError(any()) }
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val dispatcherProvider = DefaultDispatchers(
-        main = UnconfinedTestDispatcher(),
-        io = UnconfinedTestDispatcher(),
-        default = UnconfinedTestDispatcher()
-    )
 
 
     @Before
@@ -57,7 +56,7 @@ class PhotosRepositoryTest {
             .build()
             .create(PhotosService::class.java)
 
-        photosRepository = DefaultPhotosRepository(photoService, eventLogger, dispatcherProvider)
+        photosRepository = DefaultPhotosRepository(photosRequest, eventLogger, dispatcher)
     }
 
     @After
